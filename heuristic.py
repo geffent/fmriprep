@@ -1,5 +1,3 @@
-import os
-import numpy as np
 
 def create_key(template, outtype=('nii.gz',), annotation_classes=None):
     if template is None or not template:
@@ -10,61 +8,46 @@ def create_key(template, outtype=('nii.gz',), annotation_classes=None):
 def infotodict(seqinfo):
 
     anat_t1w = create_key('sub-{subject}/{session}/anat/sub-{subject}_{session}_T1w')
-    func_mid1 = create_key('sub-{subject}/{session}/func/sub-{subject}_{session}_task-MID_run-1_bold')
-    func_mid2 = create_key('sub-{subject}/{session}/func/sub-{subject}_{session}_task-MID_run-2_bold')
     func_rest = create_key('sub-{subject}/{session}/func/sub-{subject}_{session}_task-resting_bold')
     func_reversal = create_key('sub-{subject}/{session}/func/sub-{subject}_{session}_task-reversal_bold')
-    fm_AP_mid = create_key('sub-{subject}/{session}/fmap/sub-{subject}_{session}_dir-AP_task-MID_epi')
-    fm_PA_mid = create_key('sub-{subject}/{session}/fmap/sub-{subject}_{session}_dir-PA_task-MID_epi')
-    fm_AP_rest = create_key('sub-{subject}/{session}/fmap/sub-{subject}_{session}_dir-AP_task-resting_epi')
-    fm_PA_rest = create_key('sub-{subject}/{session}/fmap/sub-{subject}_{session}_dir-PA_task-resting_epi')
-    fm_AP_reversal = create_key('sub-{subject}/{session}/fmap/sub-{subject}_{session}_dir-AP_task-reversal_epi')
-    fm_PA_reversal = create_key('sub-{subject}/{session}/fmap/sub-{subject}_{session}_dir-PA_task-reversal_epi')
+    # func_mid1 = create_key('sub-{subject}/{session}/func/sub-{subject}_{session}_task-MID_run-1_bold')
+    # func_mid2 = create_key('sub-{subject}/{session}/func/sub-{subject}_{session}_task-MID_run-2_bold')
+    # fm_AP_mid = create_key('sub-{subject}/{session}/fmap/sub-{subject}_{session}_dir-AP_task-MID_epi')
+    # fm_PA_mid = create_key('sub-{subject}/{session}/fmap/sub-{subject}_{session}_dir-PA_task-MID_epi')
+    # fm_AP_rest = create_key('sub-{subject}/{session}/fmap/sub-{subject}_{session}_dir-AP_task-resting_epi')
+    # fm_PA_rest = create_key('sub-{subject}/{session}/fmap/sub-{subject}_{session}_dir-PA_task-resting_epi')
+    # fm_AP_reversal = create_key('sub-{subject}/{session}/fmap/sub-{subject}_{session}_dir-AP_task-reversal_epi')
+    # fm_PA_reversal = create_key('sub-{subject}/{session}/fmap/sub-{subject}_{session}_dir-PA_task-reversal_epi')
 
     info = {
         anat_t1w: [],
-        func_mid1: [],
-        func_mid2: [],
         func_rest: [],
         func_reversal: [],
-        fm_AP_mid: [],
-        fm_PA_mid: [],
-        fm_AP_rest: [],
-        fm_PA_rest: [],
-        fm_AP_reversal: [],
-        fm_PA_reversal: []
+        # func_mid1: [],
+        # func_mid2: [],
+        # fm_AP_mid: [],
+        # fm_PA_mid: [],
+        # fm_AP_rest: [],
+        # fm_PA_rest: [],
+        # fm_AP_reversal: [],
+        # fm_PA_reversal: []
     }
 
-    fmap_candidates_id = {'AP': [], 'PA': []}
-    fmap_keys = {'AP': fm_AP_mid, 'PA': fm_PA_mid}
+    # fmap_candidates_id = {'AP': [], 'PA': []}
+    # fmap_keys = {'AP': fm_AP_mid, 'PA': fm_PA_mid}
     
-    ### Get all series ID of interest
-    ### For fieldmaps, only get candidates
+    # Get all series ID of interest
     for s in seqinfo: 
         # python debugger which allows you to breakpoint and look around in the running program:
         # import pdb; pdb.set_trace()
-        if '008_t1_mprage' in s.dcm_dir_name.lower():
-            info[anat_t1w].append(s.series_id)
-#        if '012_fmri_mid' in s.dcm_dir_name.lower():
-#            info[func_mid1].append(s.series_id)
-#        if '013_fmri_mid' in s.dcm_dir_name.lower():
-#            info[func_mid2].append(s.series_id)
-        if 'resting' in s.dcm_dir_name.lower():
+        if 'mprage' in s.dcm_dir_name.lower():
+            # only add the first mprage found
+            if info[anat_t1w] == []:
+                info[anat_t1w].append(s.series_id)
+        elif 'resting' in s.dcm_dir_name.lower():
             info[func_rest].append(s.series_id)
-#        if 'reversal' in s.dcm_dir_name.lower():
-#            info[func_reversal].append(s.series_id)
-#        if '005_SpinEchoFieldMap_AP' in s.dcm_dir_name:
-#            info[fm_AP_reversal].append(s.series_id)
-#        if '006_SpinEchoFieldMap_PA' in s.dcm_dir_name:
-#            info[fm_PA_reversal].append(s.series_id)
-#        if '014_SpinEchoFieldMap_AP' in s.dcm_dir_name:
-#            info[fm_AP_rest].append(s.series_id)
-#        if '015_SpinEchoFieldMap_PA' in s.dcm_dir_name:
-#            info[fm_PA_rest].append(s.series_id)
-#        if '010_SpinEchoFieldMap_AP' in s.dcm_dir_name:
-#            info[fm_AP_mid].append(s.series_id)
-#        if '011_SpinEchoFieldMap_PA' in s.dcm_dir_name:
-#            info[fm_PA_mid].append(s.series_id)
+        elif 'reversal' in s.dcm_dir_name.lower():
+            info[func_reversal].append(s.series_id)
 
         # if ('AP' in s.protocol_name) and ('NORM' in s.image_type):
         #     fmap_candidates_id['AP'].append(s.series_id)
